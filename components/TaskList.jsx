@@ -1,7 +1,7 @@
 import { ScrollView, Text } from 'react-native';
 import TaskItem from './TaskItem';
 
-export default function TaskList({ tasks, onToggle, onDelete, onImagePress }) {
+export default function TaskList({ tasks, onToggle, onDelete, onImagePress, isAdmin, onAssign, selectedAssigneeId, userLookup }) {
   if (tasks.length === 0) {
     return <Text style={styles.emptyText}>Nėra užduočių. Pridėkite naują! 🎯</Text>;
   }
@@ -14,6 +14,10 @@ export default function TaskList({ tasks, onToggle, onDelete, onImagePress }) {
           onToggle={onToggle}
           onDelete={onDelete}
           onImagePress={onImagePress}
+          isAdmin={isAdmin}
+          onAssign={onAssign}
+          selectedAssigneeId={selectedAssigneeId}
+          userLookup={userLookup}
         />
       ))}
     </ScrollView>

@@ -14,7 +14,7 @@ import {
 const TASKS_COLLECTION = 'tasks';
 
 // Pridėti naują užduotį
-export async function addTask(title, deadline = null, photoBase64 = null, userId = null) {
+export async function addTask(title, deadline = null, photoBase64 = null, userId = null, priority = 'Medium') {
   try {
     const docRef = await addDoc(collection(db, TASKS_COLLECTION), {
       title: title,
@@ -22,6 +22,7 @@ export async function addTask(title, deadline = null, photoBase64 = null, userId
       photo: photoBase64,
       userId: userId,
       completed: false,
+      priority: priority,
       created_at: new Date(),
     });
     console.log('✅ Užduotis pridėta su ID:', docRef.id);
@@ -83,6 +84,33 @@ export async function deleteTask(id) {
     console.log('✅ Užduotis ištrinta:', id);
   } catch (error) {
     console.error('❌ Klaida trinant užduotį:', error);
+    throw error;
+  }
+}
+
+// Gauti visus vartotojus (adminui)
+export async function getAllUsers() {
+  try {
+    const querySnapshot = await getDocs(collection(db, 'users'));
+    const users = [];
+    querySnapshot.forEach((docItem) => {
+      users.push({ id: docItem.id, ...docItem.data() });
+    });
+    return users;
+  } catch (error) {
+    console.error('❌ Klaida gaunant vartotojus:', error);
+    throw error;
+  }
+}
+
+// Priskirti užduotį kitam vartotojui (adminui)
+export async function assignTaskToUser(taskId, userId) {
+  try {
+    const taskRef = doc(db, TASKS_COLLECTION, taskId);
+    await updateDoc(taskRef, { userId });
+    console.log('✅ Užduotis priskirta:', taskId, '→', userId);
+  } catch (error) {
+    console.error('❌ Klaida priskiriant užduotį:', error);
     throw error;
   }
 }

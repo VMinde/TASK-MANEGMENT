@@ -1,6 +1,7 @@
 import { View, TextInput, TouchableOpacity, Text } from 'react-native';
 
 export default function InputForm({ taskTitle, setTaskTitle, deadline, setDeadline, onCamera, onAddTask }) {
+
   return (
     <View style={styles.inputContainer}>
       <TextInput
@@ -12,7 +13,7 @@ export default function InputForm({ taskTitle, setTaskTitle, deadline, setDeadli
       />
       <TextInput
         style={[styles.input, styles.inputDeadline]}
-        placeholder="Deadline: YYYY-MM-DD"
+        placeholder="📅 YYYY-MM-DD"
         value={deadline}
         onChangeText={setDeadline}
         placeholderTextColor="#999"

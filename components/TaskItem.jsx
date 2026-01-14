@@ -1,7 +1,9 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { formatDate, isDeadlineExpired } from '../utils/dateUtils';
 
-export default function TaskItem({ task, onToggle, onDelete, onImagePress }) {
+export default function TaskItem({ task, onToggle, onDelete, onImagePress, isAdmin, onAssign, selectedAssigneeId, userLookup }) {
+  const assignee = task.userId ? userLookup?.[task.userId] : null;
+  const assigneeLabel = assignee ? (assignee.nickname || assignee.firstName || assignee.email) : 'Nepriskirta';
   return (
     <View style={styles.taskItem}>
       <TouchableOpacity style={styles.checkbox} onPress={() => onToggle(task.id, task.completed)}>
@@ -10,6 +12,12 @@ export default function TaskItem({ task, onToggle, onDelete, onImagePress }) {
       <View style={styles.taskContent}>
         <Text style={[styles.taskText, task.completed && styles.completedTask]}>{task.title}</Text>
         <Text style={styles.taskTime}>🕐 Sukurta: {formatDate(task.created_at)}</Text>
+        {isAdmin && (
+          <View style={styles.assigneeRow}>
+            <Text style={styles.assigneeLabel}>👤 {assigneeLabel}</Text>
+            <Text style={styles.assigneeHint}>{task.userId ? '' : ' (pasirinkite ir priskirkite)'}</Text>
+          </View>
+        )}
         {task.deadline && (
           <Text style={[styles.taskDeadline, isDeadlineExpired(task.deadline) && styles.deadlineExpired]}>
             📅 Deadline: {task.deadline}
@@ -22,6 +30,11 @@ export default function TaskItem({ task, onToggle, onDelete, onImagePress }) {
             <View style={styles.photoOverlay}>
               <Text style={styles.photoLabel}> Žiūrėti nuotrauką</Text>
             </View>
+          </TouchableOpacity>
+        )}
+        {isAdmin && (
+          <TouchableOpacity style={styles.assignButton} onPress={() => onAssign(task.id)}>
+            <Text style={styles.assignButtonText}>📌 Priskirti dabartiniam pasirinkimui {selectedAssigneeId ? '' : '(pasirinkite apačioje)'}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -110,6 +123,35 @@ const styles = {
     fontSize: 12,
     fontWeight: '600',
     textAlign: 'center',
+  },
+  assigneeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+    marginBottom: 2,
+  },
+  assigneeLabel: {
+    fontSize: 12,
+    color: '#1f2937',
+    fontWeight: '700',
+  },
+  assigneeHint: {
+    fontSize: 11,
+    color: '#9ca3af',
+  },
+  assignButton: {
+    marginTop: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    backgroundColor: '#eef2ff',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#c7d2fe',
+  },
+  assignButtonText: {
+    color: '#312e81',
+    fontSize: 12,
+    fontWeight: '700',
   },
   deleteButton: {
     padding: 5,
